@@ -13,13 +13,13 @@ export class MenuComponent {
   CentrarVertical = true;
   opciones = [
     { nombre: 'Clientes', icono: 'bi-people-fill', ruta: '/cliente' },
-    // { nombre: 'Pedidos', icono: 'bi-bag-fill', ruta: '/pedido-listado' },
-    // { nombre: 'Historial de Pedidos', icono: 'bi-clock-history', ruta: '/pedido-historial-listado' },
+    { nombre: 'Pedidos', icono: 'bi-bag-fill', ruta: '/pedido-listado' },
+    { nombre: 'Historial de Pedidos', icono: 'bi-clock-history', ruta: '/pedido-historial-listado' },
     { nombre: 'Inventario', icono: 'bi-box-seam', ruta: '/inventario-listado' },
     { nombre: 'Ventas', icono: 'bi-cash-stack', ruta: '/venta-listado' },
-    // { nombre: 'Anexos', icono: 'bi-paperclip', ruta: '/menu-oficial' },
-    { nombre: 'Reportes', icono: 'bi-bar-chart-fill', ruta: '/reporte-venta' }
-    // { nombre: 'Configuración', icono: 'bi-gear-fill', ruta: '/configuracion-listado' }
+    { nombre: 'Anexos', icono: 'bi-paperclip', ruta: '/menu-oficial' },
+    { nombre: 'Reportes', icono: 'bi-bar-chart-fill', ruta: '/reporte-venta' },
+    { nombre: 'Configuración', icono: 'bi-gear-fill', ruta: '/configuracion-listado' }
   ];
 
 
