@@ -60,15 +60,15 @@ export class InventarioListadoComponent implements OnInit {
     });
   }
   DetectarDobleTap(codigo: any) {
-  const tiempoActual = new Date().getTime();
-  const tapLength = tiempoActual - this.ultimoTap;
+    const tiempoActual = new Date().getTime();
+    const tapLength = tiempoActual - this.ultimoTap;
 
-  if (tapLength < 300 && tapLength > 0) {
-    this.AbrirInventarioGestion(codigo);
+    if (tapLength < 300 && tapLength > 0) {
+      this.AbrirInventarioGestion(codigo);
+    }
+
+    this.ultimoTap = tiempoActual;
   }
-
-  this.ultimoTap = tiempoActual;
-}
   FiltrarInventario() {
 
     this.InventarioFiltrado = this.InventarioOriginal
@@ -138,34 +138,56 @@ export class InventarioListadoComponent implements OnInit {
 
   IniciarArrastre(event: any, index: number) {
     if (this.MostrandoEliminados) return; // no permitir eliminar en eliminados
-    event.preventDefault();
+
     const startX = event.type.startsWith('touch') ? event.touches[0].clientX : event.clientX;
+    const startY = event.type.startsWith('touch') ? event.touches[0].clientY : event.clientY; // Guardamos posición vertical
     const content = event.currentTarget;
+    let arrastrePermitido = false; // Bandera para saber si es movimiento horizontal
 
     const mover = (moveEvent: any) => {
       const clientX = moveEvent.type.startsWith('touch') ? moveEvent.touches[0].clientX : moveEvent.clientX;
-      let dx = clientX - startX;
-      if (dx < 0) dx = 0;
-      if (dx > 80) dx = 80;
-      content.style.transform = `translateX(${dx}px)`;
+      const clientY = moveEvent.type.startsWith('touch') ? moveEvent.touches[0].clientY : moveEvent.clientY;
+
+      const dx = clientX - startX;
+      const dy = clientY - startY;
+
+      // 📌 LÓGICA CLAVE: Si el movimiento es más horizontal que vertical → activamos arrastre
+      if (!arrastrePermitido) {
+        if (Math.abs(dx) > Math.abs(dy)) {
+          arrastrePermitido = true;
+          event.preventDefault(); // Solo bloqueamos desplazamiento si es horizontal
+        } else {
+          return; // Si es vertical, NO hacemos nada, dejamos deslizar la página
+        }
+      }
+
+      // Solo movemos si ya confirmamos que es arrastre horizontal
+      if (arrastrePermitido) {
+        let desplazamiento = dx;
+        if (desplazamiento < 0) desplazamiento = 0; // No ir a la izquierda
+        if (desplazamiento > 80) desplazamiento = 80; // Límite derecho
+        content.style.transform = `translateX(${desplazamiento}px)`;
+      }
     };
 
     const soltar = () => {
-      const transformX = parseInt(content.style.transform.replace('translateX(', '').replace('px)', '')) || 0;
-      content.style.transform = `translateX(0)`;
-      if (transformX > 60) {
-        const producto = this.InventarioFiltrado[index].Producto;
-        // USAR ALERTA DE CONFIRMACIÓN
-        this.alertaServicio.Confirmacion(
-          'Confirmar eliminación',
-          `¿Desea eliminar el producto "${producto}"?`,
-          'Eliminar',
-          'Cancelar'
-        ).then(confirmed => {
-          if (confirmed) {
-            this.ConfirmarEliminar(index);
-          }
-        });
+      if (arrastrePermitido) { // Solo procesamos si fue un arrastre válido
+        const transformX = parseInt(content.style.transform.replace('translateX(', '').replace('px)', '')) || 0;
+        content.style.transform = `translateX(0)`;
+        if (transformX > 60) {
+          const producto = this.InventarioFiltrado[index].Producto;
+          // USAR ALERTA DE CONFIRMACIÓN
+          this.alertaServicio.Confirmacion(
+            'Confirmar eliminación',
+            `¿Desea eliminar el producto "${producto}"?`,
+            'Eliminar',
+            'Cancelar'
+          ).then(confirmed => {
+            if (confirmed) {
+              this.ConfirmarEliminar(index);
+            }
+          });
+        }
       }
 
       window.removeEventListener('mousemove', mover);
