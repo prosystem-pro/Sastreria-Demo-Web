@@ -1402,10 +1402,10 @@ export class PedidoGestionComponent {
         return;
       }
 
-      if (fechaEntregaDate <= hoyDate) {
-        this.AlertaServicio.MostrarAlerta('La fecha de entrega debe ser mayor a hoy');
-        return;
-      }
+      // if (fechaEntregaDate <= hoyDate) {
+      //   this.AlertaServicio.MostrarAlerta('La fecha de entrega debe ser mayor a hoy');
+      //   return;
+      // }
 
     }
 
